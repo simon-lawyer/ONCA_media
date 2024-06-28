@@ -20,6 +20,9 @@ def send_notification(message, api_token=api_token, user_key=user_key, pushover_
     response = requests.post(pushover_url, data=data)
     if response.status_code != 200:
         sys.exit('Failed to send notification. Exiting script.')
+        
+#just a test to make sure this is working
+send_notification("ONCA media feed script started")
 
 # RSS feed
 
