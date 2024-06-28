@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 import requests
 
+
+# pushover
 api_token = os.getenv("PUSHOVER_API_TOKEN")
 user_key = os.getenv("PUSHOVER_USER_KEY")
 pushover_url = "https://api.pushover.net/1/messages.json"
@@ -19,10 +21,7 @@ def send_notification(message, api_token=api_token, user_key=user_key, pushover_
     if response.status_code != 200:
         sys.exit('Failed to send notification. Exiting script.')
 
-# send a notification to say that the script has started
-
-message = f'Checking the ONCA feed @ {datetime.now()}.'
-send_notification(message)
+# RSS feed
 
 url = 'https://www.ontariocourts.ca/rss/coa/media.xml'
 
