@@ -21,14 +21,16 @@ def send_notification(message, api_token=api_token, user_key=user_key, pushover_
     if response.status_code != 200:
         sys.exit('Failed to send notification. Exiting script.')
         
-#just a test to make sure this is working
-send_notification("ONCA media feed script started")
 
 # RSS feed
 
 url = 'https://www.ontariocourts.ca/rss/coa/media.xml'
 
 feed = feedparser.parse(url)
+
+if feed.status != 200:
+    send_notification(f"Failed to fetch media feed. Status code: {feed.status}")
+    sys.exit('Failed to fetch media feed. Exiting script.')
 
 if len(feed['entries']):
     send_notification(f"New media feed entry: {feed['entries'][0]['title']}")
@@ -51,4 +53,3 @@ if len(feed['entries']):
         
         if new_number_of_entries > number_of_entries:
             df.to_csv('ONCA_media/master.csv', index=False)
-
