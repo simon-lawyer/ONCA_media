@@ -5,6 +5,9 @@ from datetime import datetime
 import requests
 
 
+now = datetime.now()
+date = now.strftime("%Y %m %d")
+
 # pushover
 api_token = os.getenv("PUSHOVER_API_TOKEN")
 user_key = os.getenv("PUSHOVER_USER_KEY")
@@ -21,6 +24,13 @@ def send_notification(message, api_token=api_token, user_key=user_key, pushover_
     if response.status_code != 200:
         sys.exit('Failed to send notification. Exiting script.')
         
+def save_webpage_content(url, file_path):
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(response.text)
+    else:
+        sys.exit('Failed to fetch the webpage content. Exiting script.')
 
 # RSS feed
 
@@ -43,6 +53,7 @@ if len(feed['entries']) > 0:
         df = pd.DataFrame(feed['entries'])
         df.to_csv('ONCA_media/master.csv', index=False)
         send_notification(f"New media feed entry: {feed['entries'][0]['title']}")
+        save_webpage_content(feed['entries'][0]['link'], f'ONCA_media/{date} notice.html')
     
     else:
         df = pd.read_csv('ONCA_media/master.csv')
@@ -53,4 +64,5 @@ if len(feed['entries']) > 0:
         
         if new_number_of_entries > number_of_entries:
             send_notification(f"New media feed entry: {feed['entries'][0]['title']}")
+            save_webpage_content(feed['entries'][0]['link'], f'ONCA_media/{date} notice.html')
             df.to_csv('ONCA_media/master.csv', index=False)
